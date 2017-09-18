@@ -1,17 +1,10 @@
 class Spree::UserPasswordsController < Devise::PasswordsController
-  helper 'spree/base', 'spree/store'
-
-  if Spree::Auth::Engine.dash_available?
-    helper 'spree/analytics'
-  end
+  helper 'spree/base'
 
   include Spree::Core::ControllerHelpers::Auth
   include Spree::Core::ControllerHelpers::Common
   include Spree::Core::ControllerHelpers::Order
-  include Spree::Core::ControllerHelpers::SSL
   include Spree::Core::ControllerHelpers::Store
-
-  ssl_required
 
   # Overridden due to bug in Devise.
   #   respond_with resource, :location => new_session_path(resource_name)
@@ -25,7 +18,7 @@ class Spree::UserPasswordsController < Devise::PasswordsController
 
     if resource.errors.empty?
       set_flash_message(:notice, :send_instructions) if is_navigational_format?
-      respond_with resource, :location => spree.login_path
+      respond_with resource, location: spree.login_path
     else
       respond_with_navigational(resource) { render :new }
     end
@@ -46,6 +39,10 @@ class Spree::UserPasswordsController < Devise::PasswordsController
   end
 
   protected
+
+  def translation_scope
+    'devise.user_passwords'
+  end
 
   def new_session_path(resource_name)
     spree.send("new_#{resource_name}_session_path")

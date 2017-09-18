@@ -39,15 +39,15 @@ def create_admin_user
     email = 'spree@example.com'
   else
     puts 'Create the admin user (press enter for defaults).'
-    #name = prompt_for_admin_name unless name
+    # name = prompt_for_admin_name unless name
     email = prompt_for_admin_email
     password = prompt_for_admin_password
   end
   attributes = {
-    :password => password,
-    :password_confirmation => password,
-    :email => email,
-    :login => email
+    password: password,
+    password_confirmation: password,
+    email: email,
+    login: email
   }
 
   load 'spree/user.rb'
@@ -60,7 +60,7 @@ def create_admin_user
       role = Spree::Role.find_or_create_by(name: 'admin')
       admin.spree_roles << role
       admin.save
-      admin.generate_spree_api_key!
+      admin.generate_spree_api_key! if Spree::Auth::Engine.api_available?
       say "Done!"
     else
       say "There was some problems with persisting new admin user:"

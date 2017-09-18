@@ -1,5 +1,5 @@
 RSpec.feature 'Checkout', :js, type: :feature do
-
+  given!(:store) { create(:store) }
   given!(:country) { create(:country, name: 'United States', states_required: true) }
   given!(:state)   { create(:state, name: 'Maryland', country: country) }
   given!(:shipping_method) do
@@ -47,9 +47,9 @@ RSpec.feature 'Checkout', :js, type: :feature do
       str_addr = 'bill_address'
       select 'United States', from: "order_#{str_addr}_attributes_country_id"
       %w(firstname lastname address1 city zipcode phone).each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", with: "#{address.send(field)}"
+        fill_in "order_#{str_addr}_attributes_#{field}", with: address.send(field).to_s
       end
-      select "#{address.state.name}", from: "order_#{str_addr}_attributes_state_id"
+      select address.state.name.to_s, from: "order_#{str_addr}_attributes_state_id"
       check 'order_use_billing'
 
       click_button 'Save and Continue'
@@ -77,9 +77,9 @@ RSpec.feature 'Checkout', :js, type: :feature do
       str_addr = 'bill_address'
       select 'United States', from: "order_#{str_addr}_attributes_country_id"
       %w(firstname lastname address1 city zipcode phone).each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", with: "#{address.send(field)}"
+        fill_in "order_#{str_addr}_attributes_#{field}", with: address.send(field).to_s
       end
-      select "#{address.state.name}", from: "order_#{str_addr}_attributes_state_id"
+      select address.state.name.to_s, from: "order_#{str_addr}_attributes_state_id"
       check 'order_use_billing'
 
       click_button 'Save and Continue'
@@ -118,9 +118,9 @@ RSpec.feature 'Checkout', :js, type: :feature do
       str_addr = 'bill_address'
       select 'United States', from: "order_#{str_addr}_attributes_country_id"
       %w(firstname lastname address1 city zipcode phone).each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", with: "#{address.send(field)}"
+        fill_in "order_#{str_addr}_attributes_#{field}", with: address.send(field).to_s
       end
-      select "#{address.state.name}", from: "order_#{str_addr}_attributes_state_id"
+      select address.state.name.to_s, from: "order_#{str_addr}_attributes_state_id"
       check 'order_use_billing'
 
       click_button 'Save and Continue'
@@ -135,8 +135,6 @@ RSpec.feature 'Checkout', :js, type: :feature do
 
       expect(page).to have_text 'Registration'
 
-      click_link 'Create a new account'
-
       fill_in 'Email', with: 'email@person.com'
       fill_in 'Password', with: 'spree123'
       fill_in 'Password Confirmation', with: 'spree123'
@@ -147,9 +145,9 @@ RSpec.feature 'Checkout', :js, type: :feature do
       str_addr = 'bill_address'
       select 'United States', from: "order_#{str_addr}_attributes_country_id"
       %w(firstname lastname address1 city zipcode phone).each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", with: "#{address.send(field)}"
+        fill_in "order_#{str_addr}_attributes_#{field}", with: address.send(field).to_s
       end
-      select "#{address.state.name}", from: "order_#{str_addr}_attributes_state_id"
+      select address.state.name.to_s, from: "order_#{str_addr}_attributes_state_id"
       check 'order_use_billing'
 
       click_button 'Save and Continue'

@@ -1,5 +1,4 @@
 RSpec.describe Spree::User, type: :model do
-
   before(:all) { Spree::Role.create name: 'admin' }
 
   it '#admin?' do
@@ -14,9 +13,21 @@ RSpec.describe Spree::User, type: :model do
     expect(user.reset_password_token).not_to be_nil
   end
 
+  describe '.admin_created?' do
+    it 'returns true when admin exists' do
+      create(:admin_user)
+
+      expect(Spree::User).to be_admin_created
+    end
+
+    it 'returns false when admin does not exist' do
+      expect(Spree::User).to_not be_admin_created
+    end
+  end
+
   context '#destroy' do
-    it 'will soft delete' do
-      order = build(:order, completed_at: Time.now)
+    it 'will soft delete with uncompleted orders' do
+      order = build(:order)
       order.save
       user = order.user
       user.destroy
@@ -26,6 +37,16 @@ RSpec.describe Spree::User, type: :model do
 
       expect(Spree::Order.find_by_user_id(user.id)).not_to be_nil
       expect(Spree::Order.where(user_id: user.id).first).to eq(order)
+    end
+
+    it 'will not soft delete with completed orders' do
+      # depends on Spree Core
+      # this was introduced in Spree 3.2
+      skip "this is't supported in Spree 3.1 and lower" if Spree.version.to_f < 3.2
+      order = build(:order, completed_at: Time.now)
+      order.save
+      user = order.user
+      expect { user.destroy }.to raise_error(Spree::Core::DestroyWithOrdersError)
     end
 
     it 'will allow users to register later with same email address as previously deleted account' do

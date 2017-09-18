@@ -29,7 +29,7 @@ Devise.setup do |config|
   config.http_authenticatable = true
 
   # Set this to true to use Basic Auth for AJAX requests.  True by default.
-  #config.http_authenticatable_on_xhr = false
+  # config.http_authenticatable_on_xhr = false
 
   # The realm used in Http Basic Authentication
   config.http_authentication_realm = 'Spree Application'
@@ -111,7 +111,7 @@ Devise.setup do |config|
   # access, but formats like :xml or :json, should return 401.
   # If you have any extra navigational formats, like :iphone or :mobile, you
   # should add them to the navigational formats lists. Default is [:html]
-  config.navigational_formats = [:html, :json, :xml]
+  config.navigational_formats = [:html]
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not (yet) supported by Devise,
@@ -134,4 +134,10 @@ Devise.setup do |config|
   config.sign_out_via = :get
 
   config.case_insensitive_keys = [:email]
+
+  # keep old config
+  config.email_regexp = /\A[^@\s]+@([^@\s]+\.)+[^@\W]+\z/
+  config.reconfirmable = false
+  config.skip_session_storage = []
+  config.strip_whitespace_keys = []
 end

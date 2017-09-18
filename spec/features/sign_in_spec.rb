@@ -1,5 +1,4 @@
 RSpec.feature 'Sign In', type: :feature do
-
   background do
     @user = create(:user, email: 'email@person.com', password: 'secret', password_confirmation: 'secret')
     visit spree.login_path
@@ -10,7 +9,7 @@ RSpec.feature 'Sign In', type: :feature do
     expect(page).not_to have_text 'Authorization Failure'
   end
 
-  scenario 'let a user sign in successfully' do
+  scenario 'let a user sign in successfully', js: true do
     fill_in 'Email', with: @user.email
     fill_in 'Password', with: @user.password
     click_button 'Login'
@@ -38,11 +37,13 @@ RSpec.feature 'Sign In', type: :feature do
     fill_in 'Password', with: user.password
     click_button 'Login'
 
-    expect(page).to have_text 'Logged in as: admin@person.com'
+    within '.user-menu' do
+      expect(page).to have_text 'admin@person.com'
+    end
     expect(current_path).to eq '/admin/orders'
   end
 
-  it "should store the user previous location" do
+  xit "should store the user previous location" do
     visit spree.account_path
     fill_in "Email", with: @user.email
     fill_in "Password", with: @user.password

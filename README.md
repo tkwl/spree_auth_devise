@@ -1,42 +1,71 @@
 # Spree Auth (Devise)
 
-[![Build Status](https://secure.travis-ci.org/spree/spree_auth_devise.png?branch=master)](https://travis-ci.org/spree/spree_auth_devise)
-[![Code Climate](https://codeclimate.com/github/spree/spree_auth_devise.png)](https://codeclimate.com/github/spree/spree_auth_devise)
+[![Build Status](https://travis-ci.org/spree/spree_auth_devise.svg?branch=master)](https://travis-ci.org/spree/spree_auth_devise)
+[![Code Climate](https://codeclimate.com/github/spree/spree_auth_devise/badges/gpa.svg)](https://codeclimate.com/github/spree/spree_auth_devise)
 
 Provides authentication services for Spree, using the Devise gem.
 
+
 ## Installation
 
-At one stage in the past, this used to be the auth component for Spree. If that's the feature that you're now finding lacking from Spree, that's easily fixed.
+1. Add this extension to your Gemfile with this line:
 
-Just add this line to your `Gemfile`:
+  #### Spree >= 3.1
+
+  ```ruby
+  gem 'spree_auth_devise', '~> 3.3'
+  ```
+
+  #### Spree 3.0 and Spree 2.x
+
+  ```ruby
+  gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'X-X-stable'
+  ```
+
+  The `branch` option is important: it must match the version of Spree you're using.
+  For example, use `3-0-stable` if you're using Spree `3-0-stable` or any `3.0.x` version.
+
+2. Install the gem using Bundler:
+  ```ruby
+  bundle install
+  ```
+
+3. Copy & run migrations
+  ```ruby
+  bundle exec rails g spree:auth:install
+  ```
+
+## Upgrading from Spree 3.0 to 3.1
+
+If you're upgrading from 3.0 to 3.1 you need to rerun the installer to copy new asset files (javascripts)
+
 ```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'
+bundle exec rails g spree:auth:install
 ```
 
-Please ensure you're using the correct branch of `spree_auth_devise` relative to your version of Spree.
+## Configuration
 
-Spree 1.3.x or 1-3-stable:
+### Confirmable
+
+To enable Devise's Confirmable module, which will send the user an email with a link to confirm their account, you must do the following:
+
+* Add this line to an initializer in your Rails project (typically `config/initializers/spree.rb`):
 ```ruby
-gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '1-3-stable'
+Spree::Auth::Config[:confirmable] = true
 ```
 
-Spree 1.2.x or 1-2-stable:
+* Add a Devise initializer to your Rails project (typically `config/initializers/devise.rb`):
 ```ruby
-gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '1-2-stable'
+Devise.setup do |config|
+  # Required so users don't lose their carts when they need to confirm.
+  config.allow_unconfirmed_access_for = 1.days
+
+  # Fixes the bug where Confirmation errors result in a broken page.
+  config.router_name = :spree
+
+  # Add any other devise configurations here, as they will override the defaults provided by spree_auth_devise.
+end
 ```
-
-Then run `bundle install`. Authentication will then work exactly as it did in previous versions of Spree.
-
-If you're installing this in a new Spree 1.2+ application, you'll need to install and run the migrations with
-
-    bundle exec rake spree_auth:install:migrations
-    bundle exec rake db:migrate
-    bundle exec rails g spree:auth:install
-
-and then, run this command in order to set up the admin user for the application.
-
-    bundle exec rake spree_auth:admin:create
 
 ## Using in an existing Rails application
 
@@ -69,7 +98,7 @@ Spree::Ability.register_ability(YourAbilityClass)
 
 Inside of your host application you can then use CanCan like you normally would.
 ```ruby
-<% if can? :show SomeRailsObject %>
+<% if can? :show, SomeRailsObject %>
 
 <% end %>
 ```
@@ -86,6 +115,4 @@ You need to do a quick one-time creation of a test application and then you can 
 
 Then run the rspec tests.
 
-    bundle exec rake spec
-
-If everything doesn't pass on your machine (using Ruby (1.9.3 or 2.0.0) and (MySQL or PostgreSQL or SQLite3)) then we would consider that a bug. Please file a bug report on the issues page for this project with your test output and we will investigate it.
+    bundle exec rspec

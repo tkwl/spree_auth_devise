@@ -3,14 +3,10 @@ class Spree::Admin::UserPasswordsController < Devise::PasswordsController
 
   include Spree::Core::ControllerHelpers::Auth
   include Spree::Core::ControllerHelpers::Common
-  include Spree::Core::ControllerHelpers::SSL
   include Spree::Core::ControllerHelpers::Store
 
   helper 'spree/admin/navigation'
-  helper 'spree/admin/tables'
   layout 'spree/layouts/admin'
-
-  ssl_required
 
   # Overridden due to bug in Devise.
   #   respond_with resource, :location => new_session_path(resource_name)
@@ -24,7 +20,7 @@ class Spree::Admin::UserPasswordsController < Devise::PasswordsController
 
     if resource.errors.empty?
       set_flash_message(:notice, :send_instructions) if is_navigational_format?
-      respond_with resource, :location => spree.admin_login_path
+      respond_with resource, location: spree.admin_login_path
     else
       respond_with_navigational(resource) { render :new }
     end
@@ -42,4 +38,9 @@ class Spree::Admin::UserPasswordsController < Devise::PasswordsController
     end
   end
 
+  protected
+
+  def translation_scope
+    'devise.user_passwords'
+  end
 end
